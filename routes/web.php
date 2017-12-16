@@ -11,3 +11,5 @@ use IceTea\Routing\Route;
 */
 
 Route::get("/", "TestController@index");
+Route::get("/elfinder", "ElfinderController@index");
+Route::any("/elfinder/connector", "ElfinderController@connector");

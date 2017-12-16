@@ -7,14 +7,14 @@
 
 		<!-- Require JS (REQUIRED) -->
 		<!-- Rename "main.default.js" to "main.js" and edit it if you need configure elFInder options or any things -->
-		<script data-main="./main.default.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+		<script data-main="./assets/js/main-default.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
 		<script>
 			define('elFinderConfig', {
 				// elFinder options (REQUIRED)
 				// Documentation for client options:
 				// https://github.com/Studio-42/elFinder/wiki/Client-configuration-options
 				defaultOpts : {
-					url : 'php/connector.minimal.php' // connector URL (REQUIRED)
+					url : 'elfinder/connector' // connector URL (REQUIRED)
 					,commandsOptions : {
 						edit : {
 							extraOptions : {
