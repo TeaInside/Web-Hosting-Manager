@@ -34,15 +34,14 @@ if (! function_exists('basepath')) {
 if (! function_exists('asset')) {
     function asset($assetsFile = '')
     {
-        return trim(\IceTea\Utils\Config::get('assets').'/'.$assetsFile, '/');
+        return trim(\IceTea\Utils\Config::get('assets').'/'.$assetsFile."?t=".time(), '/');
     }
 }
 
 if (! function_exists('e')) {
     function e($str = "")
     {
-        print $str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-        return $str;
+        return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
     }
 }
 
@@ -87,5 +86,13 @@ if (! function_exists('ice_decrypt')) {
     function ice_decrypt($str, $key)
     {
         return \IceTea\Security\Encryption\IceCrypt::decrypt($str, $key);
+    }
+}
+
+
+if (! function_exists('route')) {
+    function route($name, ...$params)
+    {
+        return  rtrim(env("APP_URL"), "/")."/".trim(\IceTea\Routing\RouteNameHandler::getRoute($name, ...$params), "/");
     }
 }

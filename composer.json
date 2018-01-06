@@ -29,9 +29,6 @@
         },
         "files": [
             "framework/init/composer.php"
-        ],
-        "classmap": [
-            "elfinder/php"
         ]
     },
     "autoload-dev": {
