@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use IceTea\Http\Controller;
+use IceTea\Session\SessionHandler as S;
 
 class ElfinderController extends Controller
 {
@@ -19,11 +20,15 @@ class ElfinderController extends Controller
 
     public function connector()
     {
-    	$docroot = "/home/ammarfaizi2/";
-    	$trash = "{$docroot}/.trash";
-    	is_dir($trash) or mkdir($trash);
-
-    	require basepath('elfinder/php/connector.minimal.php');
+        if ($u = S::get('user')) {
+            
+            $docroot = $u['document_root'];
+            $trash = "{$docroot}/.trash";
+            is_dir($trash) or mkdir($trash);
+            require basepath('elfinder/php/connector.minimal.php');
+        } else {
+            header("location:".route('login'));
+        }
     }
 
     public function index()

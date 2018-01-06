@@ -1,0 +1,15 @@
+h1 {
+	font-family: Helvetica;
+}
+.head-form {
+	margin-top: 10%;
+}
+.form-cage {
+	border: 2px solid #000;
+	width: 30%;
+	padding-bottom: 2%;
+	margin-top: 7%;
+}
+.sub-cage {
+	margin: 7%;
+}

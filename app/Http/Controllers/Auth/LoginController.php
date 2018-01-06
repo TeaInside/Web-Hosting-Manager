@@ -8,7 +8,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Auth;
 use IceTea\Http\Controller;
+use IceTea\Session\SessionHandler as S;
 
 class LoginController extends Controller
 {
@@ -20,5 +22,22 @@ class LoginController extends Controller
     public function index()
     {
     	return view('auth/login');
+    }
+
+    public function action()
+    {
+    	header("Content-type: application/json");
+    	$a = json_decode(file_get_contents("php://input"), true);
+    	if (isset($a['username'], $a['password'])) {
+    		if ($auth = Auth::login($a['username'], $a['password'])) {
+    			S::set("user", $auth);
+    			print json_encode(
+    				[
+    					"redirect" => route('elfinder'),
+    					"message" => "Login success!"
+    				]
+    			);
+    		}
+    	}
     }
 }
