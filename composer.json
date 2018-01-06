@@ -27,6 +27,7 @@
             "App\\": "app/",
             "IceTea\\": "framework/IceTea/"
         },
+        "classmap": ["elfinder"],
         "files": [
             "framework/init/composer.php"
         ]
