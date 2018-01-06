@@ -40,4 +40,11 @@ class LoginController extends Controller
     		}
     	}
     }
+
+    public function logout()
+    {
+        S::set('user', null);
+        header("location:".route('login'));
+        die;
+    }
 }
