@@ -1,1 +1,0 @@
-function domId(i){return document.getElementById(i)}
