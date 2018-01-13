@@ -1,0 +1,10 @@
+* {
+	font-family: Helvetica;
+}
+button {
+	cursor: pointer;
+}
+.navbar {
+	margin-top: 20px;
+	margin-bottom: 25px;
+}
