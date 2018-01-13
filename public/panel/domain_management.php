@@ -38,8 +38,8 @@ function reloadPath($username, $path)
 			shell_exec("sudo rm -rf ".$value);
 			shell_exec("sudo mkdir -p ".$value);
 		}
-		shell_exec("sudo chmod -R 777 ".$value);
-		shell_exec("sudo chown -R {$username}:{$username} ".$value);
+		shell_exec("sudo chmod -R 775 ".$value);
+		shell_exec("sudo chown -R {$username}:www-data ".$value);
 	}
 }
 

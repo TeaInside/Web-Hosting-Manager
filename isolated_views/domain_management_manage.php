@@ -57,6 +57,13 @@ function domainManage(&$a)
 	}
 
 	file_put_contents(sites_available."/map", json_encode($map, 128));
+
+	reloadPath($a['username'],
+		[
+			$_POST['document_root'],
+			$_POST['logs']
+		]
+	);
 }
 if (isset($_GET['action'], $_POST['domain'], $_POST['document_root'], $_POST['logs'])) {
 	if (!($_SESSION['alert'] = domainManage($a))) {
