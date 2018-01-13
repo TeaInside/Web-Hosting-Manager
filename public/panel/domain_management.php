@@ -35,11 +35,11 @@ function reloadPath($username, $path)
 {
 	foreach ($path as $value) {
 		if (! is_dir($path)) {
-			shell_exec("sudo rm -rf ".$path);
-			shell_exec("sudo mkdir -p ".$path);
+			shell_exec("sudo rm -rf ".$value);
+			shell_exec("sudo mkdir -p ".$value);
 		}
-		shell_exec("sudo chmod -R 777 ".$path);
-		shell_exec("sudo chown -R {$username}:{$username} ".$path);
+		shell_exec("sudo chmod -R 777 ".$value);
+		shell_exec("sudo chown -R {$username}:{$username} ".$value);
 	}
 }
 
