@@ -34,7 +34,7 @@ function makeConfig($username, $domain, $docroot, $logs)
 function reloadPath($username, $path)
 {
 	foreach ($path as $value) {
-		if (! is_dir($path)) {
+		if (! is_dir($value)) {
 			shell_exec("sudo rm -rf ".$value);
 			shell_exec("sudo mkdir -p ".$value);
 		}
