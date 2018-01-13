@@ -11,10 +11,31 @@ function domainNotFound($domain)
 	die;
 }
 
+function makeConfig($username, $domain, $docroot, $logs)
+{
+	$a = str_replace(
+			[
+				"{{domain}}",
+				"{{document_root}}",
+				"{{logs}}"
+			],
+			[
+				$domain,
+				$docroot,
+				$logs
+			],
+			file_get_contents(basepath."/isolated_files/domain80.stub")
+	);
+	$a = file_put_contents($file = sites_available."/".$username."_".$domain.".conf", $a);
+	$file = realpath($file);
+	shell_exec("sudo ln -s $file /etc/apache2/sites-enabled/".$username."_".$domain.".conf");
+}
+
 $a = Container::gi();
 if (isset($_GET['reload'])) {
 	if (isset($a['domains'][$_GET['reload']])) {
-		?><script type="text/javascript">alert('<?php print $_GET['reload']; ?> was being reloaded!');window.location='?'</script><?php
+		makeConfig($a['username'], $_GET['reload'], $a['domains'][$_GET['reload']]['document_root'], $a['domains'][$_GET['reload']]['logs']);
+		?><script type="text/javascript">alert('<?php print $_GET['reload'];?> was being reloaded!\n<?php print "\\n".shell_exec("sudo service apache2 reload 2>&1"); ?>');window.location='?'</script><?php
 	} else {
 		domainNotFound($_GET['reload']);
 	}

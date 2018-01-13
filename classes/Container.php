@@ -6,9 +6,17 @@ class Container implements ArrayAccess
 
 	private $container = [];
 
+	private $username;
+
 	protected function __construct($username)
 	{
+		$this->username  = $username;
 		$this->container = json_decode(file_get_contents(data."/users/{$username}"), true);
+	}
+
+	public function __destruct()
+	{
+		file_put_contents(data."/users/{$this->username}", json_encode($this->container, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 	}
 
 	public static function &gi()

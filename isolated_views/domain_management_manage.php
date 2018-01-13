@@ -1,64 +1,74 @@
 <?php
 
-function domainManage($a)
+function domainManage(&$a)
 {
 
-	function makeConfig($username, $domain, $docroot, $logs)
+	function deleteOldDomainConfig($username, $domain)
 	{
-		$a = str_replace(
-				[
-					"{{domain}}",
-					"{{document_root}}",
-					"{{logs}}"
-				],
-				[
-					$domain,
-					$docroot,
-					$logs
-				],
-				file_get_contents(basepath."/isolated_files/domain80.stub")
-		);
-		file_put_contents($file = realpath(sites_available."/".$username."_".$domain.".conf"), $a);
-		shell_exec("sudo ln -s $file /etc/apache2/sites-enabled/".$username."_".$domain.".conf");
+		shell_exec("rm -f ".sites_available."/".$username."_".$domain.".conf");
+		shell_exec("rm -f /etc/apache2/sites-enabled/".$username."_".$domain.".conf");
 	}
 
-	if (isset($_GET['action'], $_POST['domain'], $_POST['document_root'], $_POST['logs'])) {
-		$_POST['domain'] = strtolower($_POST['domain']);
-		$len = strlen($_POST['domain']);
+	$_POST['domain'] = strtolower($_POST['domain']);
+	$len = strlen($_POST['domain']);
 
-		if (preg_match('/[^a-zA-Z\.\-]/', $_POST['domain']) || preg_match('/[^a-zA-Z]/', $_POST['domain'][$len - 1])) {
-			return "Invalid domain ".$_POST['domain']."!";
+	if (preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][0]) || preg_match('/[^a-zA-Z0-9\.\-]/', $_POST['domain']) || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][$len - 1])) {
+		return "Invalid domain ".$_POST['domain']."!";
+	}
+	$map = json_decode(file_get_contents(sites_available."/map"));
+	$map = is_array($map) ? $map : [];
+	$offset = array_search($_POST['domain'], $map);
+	if ($_POST['domain'] !== $_GET['manage']) {
+		if ($offset !== false) {
+			return "Domain ".$_POST['domain']." is already exists in our system!";
+		} else {
+			$oldDomainConflict = true;
 		}
-		$map = json_decode(file_get_contents(sites_available."/map"));
-		$map = is_array($map) ? $map : [];
-		$offset = array_search($_POST['domain'], $map);
-		if ($_POST['domain'] !== $_GET['manage']) {
-			if ($offset !== false) {
-				return "Domain ".$_POST['domain']." is already exists in our system!";
-			}
-		}
-		if (substr($_POST['document_root'], 0, $len = strlen($a['chroot'])) !== $a['chroot']) {
-			return "Document root must be start with ".$a['chroot'];
-		}
-		if (substr($_POST['logs'], 0, $len = strlen($a['chroot'])) !== $a['chroot']) {
-			return "Logs must be start with ".$a['chroot'];
-		}
-		
-		if (! is_dir($_POST['document_root'])) {
-			shell_exec("sudo rm -rf ".$_POST['document_root']);
-			shell_exec("sudo mkdir -p ".$_POST['document_root']);
-		}
-		
-		if (! is_dir($_POST['logs'])) {
-			shell_exec("sudo rm -rf ".$_POST['logs']);
-			shell_exec("sudo mkdir -p ".$_POST['logs']);	
-		}
+	}
+	if (substr($_POST['document_root'], 0, $len = strlen($a['chroot'])) !== $a['chroot']) {
+		return "Document root must be start with ".$a['chroot'];
+	}
+	if (substr($_POST['logs'], 0, $len = strlen($a['chroot'])) !== $a['chroot']) {
+		return "Logs must be start with ".$a['chroot'];
+	}
+	
+	if (! is_dir($_POST['document_root'])) {
+		shell_exec("sudo rm -rf ".$_POST['document_root']);
+		shell_exec("sudo mkdir -p ".$_POST['document_root']);
+	}
+	
+	if (! is_dir($_POST['logs'])) {
+		shell_exec("sudo rm -rf ".$_POST['logs']);
+		shell_exec("sudo mkdir -p ".$_POST['logs']);	
+	}
 
-		makeConfig($a['username'], $_POST['domain'], $_POST['document_root'], $_POST['logs']);
+	makeConfig($a['username'], $_POST['domain'], $_POST['document_root'], $_POST['logs']);
+	if (isset($oldDomainConflict)) {
+		unset($a['domains'][$_GET['manage']], $map[$offset]);
+		deleteOldDomainConfig($a['username'], $_GET['manage']);
+	}
+	$a['domains'][$_POST['domain']] = [
+		"document_root" => $_POST['document_root'],
+		"logs" => $_POST['logs']
+	];
+
+	if (array_search($_POST['domain'], $map) === false) {
+		$map[] = $_POST['domain'];
+	}
+
+	file_put_contents(sites_available."/map", json_encode($map, 128));
+}
+if (isset($_GET['action'], $_POST['domain'], $_POST['document_root'], $_POST['logs'])) {
+	if (!($_SESSION['alert'] = domainManage($a))) {
+		redirect("?ref=manage_success&w=".urlencode(rstr(64)));
+	} else {
+		redirect("");
 	}
 }
-
-$alert = domainManage($a);
+if (isset($_SESSION['alert'])) {
+	$alert = $_SESSION['alert'];
+	$_SESSION['alert'] = null;
+}
 ?>
 <!DOCTYPE html>
 <html>
