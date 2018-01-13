@@ -73,7 +73,7 @@ die;
 	</div>
 	<div class="main-cage">
 		<div>
-			<button>Add New Domain</button>
+			<a href="?add_new_domain=1"><button>Add New Domain</button></a>
 		</div>
 		<?php foreach ($a['domains'] as $key => $val): ?>
 			<div class="sub-cage">

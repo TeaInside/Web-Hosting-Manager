@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 		<title>elFinder 2.1.x source version with PHP connector</title>
-		<script data-main="../js/main.default.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+		<script data-main="../js/main.default.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
 		<script>
 			define('elFinderConfig', {
 				defaultOpts : {
@@ -51,8 +51,8 @@
 	<body>
 		<center>
 			<div style="margin-bottom: 10px;">
-				<a href="../home.php?ref=elfinder&w=<?php print urlencode(rstr(64)); ?>"><button>Back to home</button></a>
-				<a href="logout.php?ref=elfinder&w=<?php print urlencode(rstr(64)); ?>"><button>Logout</button></a>
+				<a href="../home.php?ref=elfinder&amp;w=<?php print urlencode(rstr(64)); ?>"><button>Back to home</button></a>
+				<a href="../logout.php?ref=elfinder&amp;w=<?php print urlencode(rstr(64)); ?>"><button>Logout</button></a>
 			</div>
 			<div id="elfinder"></div>
 		</center>

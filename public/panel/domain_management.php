@@ -69,6 +69,9 @@ if (isset($_GET['reload'])) {
 		domainNotFound($_GET['manage']);
 	}
 	die;
+} elseif (isset($_GET['add_new_domain'])) {
+	view('domain_management_add_new_domain', ["a" => $a]);
+	die;
 }
 
 
