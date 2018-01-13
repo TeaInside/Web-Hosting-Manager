@@ -31,10 +31,32 @@ function makeConfig($username, $domain, $docroot, $logs)
 	shell_exec("sudo ln -s $file /etc/apache2/sites-enabled/".$username."_".$domain.".conf");
 }
 
+function reloadPath($username, $path)
+{
+	foreach ($path as $value) {
+		if (! is_dir($path)) {
+			shell_exec("sudo rm -rf ".$path);
+			shell_exec("sudo mkdir -p ".$path);
+		}
+		shell_exec("sudo chmod -R 777 ".$path);
+		shell_exec("sudo chown -R {$username}:{$username} ".$path);
+	}
+}
+
 $a = Container::gi();
 if (isset($_GET['reload'])) {
 	if (isset($a['domains'][$_GET['reload']])) {
-		makeConfig($a['username'], $_GET['reload'], $a['domains'][$_GET['reload']]['document_root'], $a['domains'][$_GET['reload']]['logs']);
+		reloadPath($a['username'], 
+			[
+				$a['domains'][$_GET['reload']]['document_root'], 
+				$a['domains'][$_GET['reload']]['logs']
+			]
+		);
+		makeConfig(
+			$a['username'], 
+			$_GET['reload'], $a['domains'][$_GET['reload']]['document_root'], 
+			$a['domains'][$_GET['reload']]['logs']
+		);
 		?><script type="text/javascript">alert('<?php print $_GET['reload'];?> was being reloaded!\n<?php print "\\n".shell_exec("sudo service apache2 reload 2>&1"); ?>');window.location='?'</script><?php
 	} else {
 		domainNotFound($_GET['reload']);
