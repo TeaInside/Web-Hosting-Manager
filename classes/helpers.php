@@ -17,7 +17,7 @@ function redirect($to = "")
 	exit(0);
 }
 
-function view($file, $__variables)
+function view($file, $__variables = [])
 {
 	foreach ($__variables as $__key => $__value) {
 		$$__key = $__value;
@@ -28,5 +28,5 @@ function view($file, $__variables)
 
 function continueablePage()
 {
-	return "continue=".urlencode(rawurlencode(APP_HOST.$_SERVER['REQUEST_URI'].$query));
+	return "continue=".urlencode(rawurlencode(APP_HOST.$_SERVER['REQUEST_URI']));
 }

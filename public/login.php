@@ -1,10 +1,14 @@
 <?php
 require __DIR__ . "/../init.php";
 if (isLoggedIn()) {
-	redirect("home.php");
+	if (isset($_GET['continue']) and trim($_GET['continue']) != "") {
+		redirect(rawurldecode($_GET['continue']));
+	} else {
+		redirect("home.php");
+	}
 }
 
-if (isset($_POST['login'], $_POST['username'], $_POST['password'])) {
+if (isset($_GET['action'], $_POST['login'], $_POST['username'], $_POST['password'])) {
 	if (login($_POST['username'], $_POST['password'])) {
 		if (isset($_GET['continue']) and trim($_GET['continue']) != "") {
 			redirect(rawurldecode($_GET['continue']));
@@ -30,7 +34,7 @@ if (isset($_POST['login'], $_POST['username'], $_POST['password'])) {
 	<div class="login-page">
 		<div class="form">
 			<h1>Login</h1>
-			<form class="login-form" action="?action=1<?php print isset($_GET['continue']) ? "&continue=".urlencode($_GET['continue']) : ""; ?>" method="post">
+			<form class="login-form" action="?action=1<?php print isset($_GET['continue']) ? "&amp;continue=".urlencode($_GET['continue']) : ""; ?>" method="post">
 				<input type="text" name="username" placeholder="Username">
 				<input type="password" name="password" placeholder="Password">
 				<button type="submit" name="login">Login</button>

@@ -7,13 +7,13 @@
 <body>
 <center>
 	<div class="navbar">
-		<a href="logout.php?ref=home_panel&w=<?php print rstr(32); ?>"><button class="btn">Logout</button></a>
+		<a href="logout.php?ref=home_panel&amp;w=<?php print rstr(32); ?>"><button class="btn">Logout</button></a>
 	</div>
 	<script type="text/javascript">
 		function showMenus(link, title, ico)
 		{
 			document.write(
-				'<a href="'+link+'">' +
+				'<a href="'+link+'" target="_blank">' +
 					'<div class="blk">' +
 						'<h2>'+title+'</h2>' +
 						'<img class="mimage" src="'+ico+'">' +
