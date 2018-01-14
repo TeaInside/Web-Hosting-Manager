@@ -3,7 +3,9 @@
 if (! defined("INIT")) {
 	define("INIT", microtime(true));
 
-	session_start();
+	session_start([
+   	 'cookie_lifetime' => 86400,
+	]);
 
 	require __DIR__ . "/config.php";
 	require __DIR__ . "/classes/helpers.php";
