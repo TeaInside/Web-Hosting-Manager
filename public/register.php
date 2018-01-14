@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__ . "/../init.php";
 if (isLoggedIn()) {
 	redirect("home.php?ref=register&w=".urlencode(rstr(64)));
@@ -14,21 +15,82 @@ if (isset($_GET['action'], $_GET['w']) && $_SERVER['REQUEST_METHOD'] === "POST")
 		]);
 		die;
 	}
-	header("Content-type:application/json");
+
+	function register($data)
+	{
+		file_put_contents("/tmp/{$data['username']}_password", 
+			$data['password']."\n".
+			$data['password']."\n".
+			$data['full_name']."\n".
+			"\n\n\n\n\nY"
+		);
+		shell_exec("sudo adduser \"{$data['username']}\" < /tmp/{$data['username']}_password");
+		shell_exec("sudo chown -R {$data['username']}:www-data /home/{$data['username']}");
+		shell_exec("sudo chmod -R 775 /home/{$data['username']}");
+		$data['chroot'] = "/home/{$data['username']}";
+		$data['domains'] = [];
+		file_put_contents(data."/users/{$data['username']}", json_encode($data, 128 | JSON_UNESCAPED_SLASHES));
+		send("Success!", "login.php?ref=register&status=ok&w=".urlencode(rstr(64)));
+	}
+	header("Content-type:application/json");	
 	$a = json_decode(file_get_contents("php://input"), true);
 	if (isset($a['full_name'], $a['email'], $a['address'], $a['phone'], $a['username'], $a['password'], $a['cpassword'])) {
+
+		$excepts = ["cpassword", "password"];
+		array_walk($a, function (&$a, $offset) use ($excepts) {
+			if (! in_array($offset, $excepts)) {
+				$a = trim($a);
+			}
+		});
+
+		if (preg_match('/[^a-zA-Z\'\s]/', $a['full_name'])) {
+			send("Invalid full name!");
+		}
+
 		if (! filter_var($a['email'], FILTER_VALIDATE_EMAIL)) {
 			send("Invalid email!");
 		}
 
 		if (strlen($a['address']) < 10) {
-			send("Address is too short, please provide real address!");
+			send("Address is too short, please provide real authentic address!");
 		}
 
 		$a['phone'] = str_replace("+62", "0", $a['phone']);
 		if (! preg_match('/(^0\d{2})\d{4,20}/', $a['phone']) || preg_match('/[^\d]/', $a['phone'])) {
 			send("Invalid phone number!");
 		}
+
+		if (preg_match('/[A-Z]/', $a['username'])) {
+			send("Username must be lowercase!");
+		}
+
+		$userlen = strlen($a['username']);
+		if ($userlen < 4) {
+			send("Username too short, please provide username with 4 characters min and 15 characters max!");
+		}
+
+		if ($userlen > 15) {
+			send("Username too long, please provide username with 4 characters min and 15 characters max!");
+		}
+
+		$users = preg_split('/\s.+\n/', shell_exec("sudo lastlog"));
+		unset($users[count($users) - 1], $users[0]);
+		if (file_exists("/home/".$a['username']) || in_array($a['username'], $users)) {
+			send("Username \"".$a['username']."\" is already used by another user, please provide other username!");
+		}
+
+		$len = strlen($a['password']);
+		if ($len < 6) {
+			send("Password is too short, please provide password more than 6 characters!");
+		}
+
+		if (preg_match("/[^[:print:]]/", $a['password'])) {
+			send("Password must not contains unprintable chars!");
+		}
+
+		unset($a['cpassword']);
+
+		register($a);
 	}
 	exit(0);
 }

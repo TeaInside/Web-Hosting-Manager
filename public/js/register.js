@@ -14,7 +14,7 @@ class register
 				var ch = new XMLHttpRequest();
 					ch.onreadystatechange = function () {
 						if (this.readyState === 4) {
-							alert(this.responseText);
+							that.action(this.responseText);
 						}
 					};
 					ch.withCredentials = true;
@@ -45,5 +45,16 @@ class register
 			return false;
 		}
 		return JSON.stringify(context);
+	}
+
+	action(data)
+	{
+		try	{
+			data = JSON.parse(data);
+			if (data['message'] !== null) {alert(data['message'])}
+			if (data['redirect'] !== null) {window.location = data['redirect']}
+		} catch (e) {
+			alert(e.message + "\n\n" + JSON.stringify(data));
+		}
 	}
 }
