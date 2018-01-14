@@ -39,10 +39,13 @@ class register
 			"username": this.domId('username').value,
 			"password": this.domId('password').value,
 			"cpassword": this.domId('cpassword').value
-		};
+		}, z;
 		if (context['password'] !== context['cpassword']) {
 			alert("Confirm password does not match!");
 			return false;
+		}
+		for(z in context) {
+			this.domId(z).disabled = 1;
 		}
 		return JSON.stringify(context);
 	}
@@ -50,6 +53,18 @@ class register
 	action(data)
 	{
 		try	{
+			var context = {
+				"full_name": 1,
+				"email": 1,
+				"address": 1,
+				"phone": 1,
+				"username": 1,
+				"password": 1,
+				"cpassword": 1
+			}, z;
+			for(z in context) {
+				this.domId(z).disabled = 0;
+			}
 			data = JSON.parse(data);
 			if (data['message'] !== null) {alert(data['message'])}
 			if (data['redirect'] !== null) {window.location = data['redirect']}
