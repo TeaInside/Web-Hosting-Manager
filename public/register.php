@@ -100,6 +100,9 @@ if (isset($_GET['action'], $_GET['w']) && $_SERVER['REQUEST_METHOD'] === "POST")
 	<title>Register</title>
 	<script type="text/javascript" src="js/register.js"></script>
 	<style type="text/css">
+		* {
+			font-family: Helvetica;
+		}
 		.main-cage {
 			margin-top: 40px;
 			border: 1px solid #000;
