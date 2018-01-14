@@ -100,6 +100,11 @@ function validName()
 	return true;
 }
 
+if (! is_dir($a['chroot'].'/.trash/.tmb')) {
+	shell_exec("sudo mkdir -p ".$a['chroot'].'/.trash');
+	shell_exec("sudo chown -R www-data:www-data ".$a['chroot'].'/.trash');
+	shell_exec("sudo chmod -R 777 ".$a['chroot'].'/.trash');
+}
 
 // Documentation for connector options:
 // https://github.com/Studio-42/elFinder/wiki/Connector-configuration-options
