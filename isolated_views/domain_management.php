@@ -3,18 +3,22 @@ if (isset($_GET['delete'])) {
 	if (isset($_POST['submit'])) {
 		$map = json_decode(file_get_contents(sites_available."/map"));
 		$map = is_array($map) ? $map : [];
-		unset($map[array_search($_GET['delete'], $map)], $a['domains'][$_GET['delete']]);
-		file_put_contents(sites_available."/map", json_encode($map, 128));
 		$cmd = [
 			"sudo rm -rf ".sites_available."/".$a['username']."_".$_GET['delete'].".conf",
 			"sudo rm -rf /etc/apache2/sites-enabled/".$a['username']."_".$_GET['delete'].".conf"
 		];
 		if ($_POST['mode'] == 2) {
-			$cmd[] = ["sudo rm -rf ".$a['domains'][$_GET['delete']]]['document_root'];
+			if ($a['domains'][$_GET['delete']]['document_root'] === $a['chroot']) {
+				$cmd[] = "sudo rm -rf ".$a['domains'][$_GET['delete']]['document_root']."/*";
+			} else {
+				$cmd[] = "sudo rm -rf ".$a['domains'][$_GET['delete']]['document_root'];
+			}
 		}
 		foreach ($cmd as $val) {
 			shell_exec($val);
 		}
+		unset($map[array_search($_GET['delete'], $map)], $a['domains'][$_GET['delete']]);
+		file_put_contents(sites_available."/map", json_encode($map, 128));
 		$_SESSION['delete'] = $_GET['delete'];
 		redirect("?");
 	}
@@ -60,6 +64,15 @@ die;
 	<?php 
 
 	$_SESSION['delete'] = null;
+
+	endif; ?>
+	<?php if (isset($_SESSION['alert'])): ?>
+		<script type="text/javascript">
+			alert('<?php print $_SESSION['alert'] ?>');
+		</script>
+	<?php 
+
+	$_SESSION['alert'] = null;
 
 	endif; ?>
 	<title>Domain Management</title>

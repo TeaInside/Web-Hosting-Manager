@@ -57,7 +57,7 @@ if (isset($_GET['reload'])) {
 			$_GET['reload'], $a['domains'][$_GET['reload']]['document_root'], 
 			$a['domains'][$_GET['reload']]['logs']
 		);
-		?><script type="text/javascript">alert('<?php print $_GET['reload'];?> was being reloaded!\n<?php print "\\n".shell_exec("sudo service apache2 reload 2>&1"); ?>');window.location='?'</script><?php
+		?><script type="text/javascript">alert('<?php print $_GET['reload'];?> was being reloaded!\n<?php print "\\n".str_replace("\n", "\\n", shell_exec("sudo service apache2 reload 2>&1")); ?>');window.location='?'</script><?php
 	} else {
 		domainNotFound($_GET['reload']);
 	}

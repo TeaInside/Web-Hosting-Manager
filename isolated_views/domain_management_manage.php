@@ -12,7 +12,7 @@ function domainManage(&$a)
 	$_POST['domain'] = strtolower($_POST['domain']);
 	$len = strlen($_POST['domain']);
 
-	if (preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][0]) || preg_match('/[^a-zA-Z0-9\.\-]/', $_POST['domain']) || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][$len - 1])) {
+	if ($len < 3 || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][0]) || preg_match('/[^a-zA-Z0-9\.\-]/', $_POST['domain']) || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][$len - 1])) {
 		return "Invalid domain ".$_POST['domain']."!";
 	}
 	$map = json_decode(file_get_contents(sites_available."/map"));

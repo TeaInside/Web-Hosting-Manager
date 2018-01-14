@@ -3,7 +3,7 @@
 function addNewDomain(&$a)
 {
 	$len = strlen($_POST['domain']);
-	if (preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][0]) || preg_match('/[^a-zA-Z0-9\.\-]/', $_POST['domain']) || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][$len - 1])) {
+	if ($len < 3 || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][0]) || preg_match('/[^a-zA-Z0-9\.\-]/', $_POST['domain']) || preg_match('/[^a-zA-Z0-9]/', $_POST['domain'][$len - 1])) {
 		return "Invalid domain ".$_POST['domain']."!";
 	}
 	$_SESSION['domain'] = $_POST['domain'];
@@ -50,17 +50,18 @@ function addNewDomain(&$a)
 
 
 if (isset($_GET['action'], $_POST['submit'], $_POST['domain'], $_POST['document_root'], $_POST['logs'])) {
-	$alert = addNewDomain($a);
+	$_SESSION['alert'] = addNewDomain($a);
+	redirect("");
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<?php if (isset($alert)): ?>
+<?php if (isset($_SESSION['alert'])): ?>
 	<script type="text/javascript">
-		alert('<?php print $alert; ?>');
+		alert('<?php print $_SESSION['alert']; ?>');
 	</script>
-<?php endif ?>
+<?php $_SESSION['alert'] = null; endif; ?>
 	<title>Add new domain</title>
 	<style type="text/css">
 		* {
@@ -86,9 +87,9 @@ if (isset($_GET['action'], $_POST['submit'], $_POST['domain'], $_POST['document_
 			<h2>Add new domain</h2>
 			<form method="post" action="?action=1&amp;add_new_domain=1">
 				<table>
-					<tr><td>Domain</td><td>:</td><td><input type="text" name="domain" size="45" <?php print isset($_SESSION['domain']) ? "value=\"".htmlspecialchars($_SESSION['domain'])."\"" : ""; ?>></td></tr>
-					<tr><td>Doc. Root</td><td>:</td><td><input type="text" name="document_root" value="<?php print htmlspecialchars(isset($_SESSION['document_root']) ? $_SESSION['document_root'] : $a['chroot']); ?>" 	size="45"></td></tr>
-					<tr><td>Logs</td><td>:</td><td><input type="text" name="logs" value="<?php print htmlspecialchars(isset($_SESSION['logs']) ? $_SESSION['logs'] : $a['chroot']); ?>" size="45"></td></tr>
+					<tr><th>Domain</th><td>:</td><td><input type="text" name="domain" size="45" <?php print isset($_SESSION['domain']) ? "value=\"".htmlspecialchars($_SESSION['domain'])."\"" : ""; ?>></td></tr>
+					<tr><th>Doc. Root</th><td>:</td><td><input type="text" name="document_root" value="<?php print htmlspecialchars(isset($_SESSION['document_root']) ? $_SESSION['document_root'] : $a['chroot']."/public"); ?>" 	size="45"></td></tr>
+					<tr><th>Logs</th><td>:</td><td><input type="text" name="logs" value="<?php print htmlspecialchars(isset($_SESSION['logs']) ? $_SESSION['logs'] : $a['chroot']."/logs"); ?>" size="45"></td></tr>
 					<tr><td colspan="3" align="center"><button type="submit" name="submit">Submit New Domain</button></td></tr>
 				</table>
 			</form>
