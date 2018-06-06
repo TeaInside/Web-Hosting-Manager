@@ -1,0 +1,33 @@
+server {
+        listen 25555;
+        server_name _;
+        root /opt/teapanel/public;
+        index index.php;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass 127.0.0.1:9001;
+        }
+
+        location ~ /\.ht {
+               deny all;
+        }
+}
+
+upstream api-control {
+    server 127.0.0.1:20881;
+    server 127.0.0.1:20882;
+    server 127.0.0.1:20883;
+}
+
+server {
+    listen 25555;
+    server_name api-control.teainside.org;
+    location / {
+        proxy_pass http://api-control;
+    }
+}

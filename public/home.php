@@ -1,13 +1,22 @@
 <?php
-require __DIR__ . "/../init.php";
-if (! isLoggedIn()) {
-	redirect("login.php?ref=home&w=".urlencode(rstr(64))."&".continueablePage());
+
+require_once __DIR__."/../init.php";
+
+if (! isset($sess["login"])) {
+	header("Location: /login.php?ref=home&w=".urldecode(rstr(64)));
+	exit;
 }
 
-$a = Container::gi();
+$a = u($sess["user"]);
 
-if ($a['username'] === "root") {
-	view('home/root', ["a" => $a]);
-} else {
-	view('home/user', ["a" => $a]);
+if (isset($a["role"])) {
+	switch ($a["role"]) {
+		case 'superuser':
+			view("home_superuser", ["a" => $a]);
+			break;
+		
+		default:
+			
+			break;
+	}
 }

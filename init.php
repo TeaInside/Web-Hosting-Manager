@@ -1,22 +1,28 @@
 <?php
 
 if (! defined("INIT")) {
-	define("INIT", microtime(true));
+	define("INIT", 1);
 
-	session_start([
-   	 'cookie_lifetime' => 86400,
-	]);
+	require __DIR__."/config/config.php";
+	require __DIR__."/isolated_files/helpers.php";
 
-	require __DIR__ . "/config.php";
-	require __DIR__ . "/classes/helpers.php";
-	function __class_loader($class)
+	function teaAutoloader($className)
 	{
-		require __DIR__ . "/classes/" . str_replace("\\", "/", $class) . ".php";
+		$className = str_replace("\\", "/", $className);
+		if (file_exists($f = __DIR__."/isolated_files/classes/{$className}.php")) {
+			require $f;
+		}
 	}
-	spl_autoload_register('__class_loader');
-	$scan = scandir(__DIR__ . "/functions");
-	unset($scan[0], $scan[1]);
-	foreach ($scan as $key => $value) {
-		require __DIR__ . "/functions/{$value}";
+
+	spl_autoload_register("teaAutoloader");
+
+	
+
+	if (isset($_COOKIE["tea_panel_session"])) {
+		$sess = session(decrypt($_COOKIE["tea_panel_session"], APP_KEY));
+	} else {
+		setcookie("tea_panel_session", encrypt($sessId = rstr(32), APP_KEY), time()+(3600*24), "/");
+		$sess = session($sessId);
 	}
+
 }
